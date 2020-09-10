@@ -1,6 +1,4 @@
-import logging; logging.basicConfig(level=logging.INFO)
-
-import asyncio
+import logging,asyncio
 
 from aiohttp import web
 
@@ -14,7 +12,7 @@ async def init(loop):
     app.router.add_route("GET","/",index)
 
 
-    runner = web.AppRunner(app=app)
+    runner=web.AppRunner(app=app)
     await runner.setup()
     site = web.TCPSite(runner,"127.0.0.1",9000)
     logging.info('server started at http://127.0.0.1:9000...')

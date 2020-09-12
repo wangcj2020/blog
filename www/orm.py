@@ -63,7 +63,7 @@ async def execute(sql, args, autocommit=True):
     '''
     log(sql,args)
     global __connection_pool
-    async with __connection_pool,get as conn:
+    async with __connection_pool.get() as conn:
         if not autocommit:
             await conn.begin()
         try:
@@ -81,3 +81,50 @@ async def execute(sql, args, autocommit=True):
 
 # 定义ORM
 #1、定义所有ORM映射的基类Model
+class Model(dict):
+    def __init__(self, **kwargs):
+        super(Model, self).__init__(**kwargs)
+
+    def __getattr__(self, item):
+        try:
+            return self[item]
+        except KeyError:
+            raise AttributeError(r"'Model' object has no attribute '%s'" % item)
+
+    def __setattr__(self, key, value):
+        self[key] = value
+
+    def get_value(self, key):
+        return getattr(self, key, None)
+
+#2、各类数据Field
+class Field(object):
+    def __init__(self, name, col_tpye, is_primary_key, default_value):
+        self.name = name
+        self.col_type = col_tpye
+        self.is_primary_key = is_primary_key
+        self.default_value = default_value
+
+    def __str__(self):
+        return '%s, %s:%s' % (self.__class__.__name__, self.col_type, self.name)
+
+class StringField(Field):
+    def __init__(self, name=None, col_type='varchar(100)',is_primary_key=False, default_value = None):
+        super().__init__(name, col_type, is_primary_key, default_value)
+
+class BooleanField(Field):
+    def __init__(self, name=None, default_value=False):
+        super().__init__(name, 'boolean', False, default_value)
+
+class TextField(Field):
+    def __init__(self, name=None, default_value=None):
+        super().__init__(name, 'text', False, default_value)
+
+class IntegerField(Field):
+    def __init__(self, name=None, is_primary_key=False, default_value=0):
+        super().__init__(name, 'int', is_primary_key, default_value)
+
+class FloatField(Field):
+    def __init__(self, name=None, is_primary_key=False, default_value=0.0):
+        super().__init__(name, 'float', is_primary_key, default_value)
+

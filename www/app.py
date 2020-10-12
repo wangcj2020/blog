@@ -1,4 +1,6 @@
-import logging,asyncio
+import logging
+logging.basicConfig(level=logging.INFO)
+import asyncio
 
 from aiohttp import web
 
@@ -20,6 +22,7 @@ async def init(loop):
 
 
 if __name__ == "__main__":
+    logging.info("main start")
     loop = asyncio.get_event_loop()
     loop.run_until_complete(init(loop))
     loop.run_forever()

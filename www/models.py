@@ -1,7 +1,6 @@
 import time,uuid
 
-from orm import Model,StringField,BooleanField,TextField,IntegerField,FloatField
-
+from www.orm import Model,StringField,BooleanField,TextField,IntegerField,FloatField
 # 生成一个唯一标识uuid作为主键
 def next_id():
     return '%015d%s000' % (int(time.time() * 1000), uuid.uuid4().hex)
